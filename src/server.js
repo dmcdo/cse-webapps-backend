@@ -1,5 +1,6 @@
 import express from "express";
 import { MongoClient, ObjectId } from "mongodb";
+import cors from "cors"
 
 const port         = 8000;
 const mongodb_user = process.env.MONGODB_USER;
@@ -9,6 +10,7 @@ const mongodb_db   = "milestone3";
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 let i = 0;
 
