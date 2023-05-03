@@ -2,8 +2,10 @@ import express from "express";
 import { MongoClient, ObjectId } from "mongodb";
 
 const port         = 8000;
-const mongodb_url  = "mongodb://127.0.0.1:27017";
-const mongodb_db   = "cse-todo-app";
+const mongodb_user = process.env.MONGODB_USER;
+const mongodb_pass = process.env.MONGODB_PASS;
+const mongodb_url  = `mongodb+srv://${mongodb_user}:${mongodb_pass}@milestone3.vwix0hd.mongodb.net/milestone3`;
+const mongodb_db   = "milestone3";
 
 const app = express();
 app.use(express.json());
