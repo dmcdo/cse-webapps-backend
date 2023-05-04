@@ -54,6 +54,30 @@ app.put("/api/put/task/", async (req, res) => {
     res.json({ acknowledged: ack.acknowledged });
 });
 
+app.put("/api/update/task/", async (req, res) => {
+    console.log(`Request to update ${req.body.id}`);
+
+    const client = new MongoClient(mongodb_url);
+    await client.connect();
+    const db = client.db(mongodb_db);
+
+    const filter = { _id: new ObjectId(req.body.id) };
+    const update = { $set: {
+        name:        req.body.name,
+        user:        req.body.user,
+        category:    req.body.category,
+        urgency:     req.body.urgency,
+        startDate:   req.body.startDate,
+        endDate:     req.body.endDate,
+        location:    req.body.location,
+        status:      req.body.status,
+        description: req.body.description,
+    } };
+
+    const ack = await db.collection("tasks").updateOne(filter, update);
+    res.json({ acknowledged: ack.acknowledged });
+});
+
 app.delete("/api/delete/task/byid/:id", async (req, res) => {
     console.log(`Request to delete ${req.params.id}`);
 
