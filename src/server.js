@@ -1,6 +1,9 @@
 import express from "express";
 import { MongoClient, ObjectId } from "mongodb";
 import cors from "cors"
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const port        = 8000;
 const mongodb_url = process.env.MONGODB_URL;
