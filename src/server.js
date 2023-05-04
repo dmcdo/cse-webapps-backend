@@ -2,17 +2,13 @@ import express from "express";
 import { MongoClient, ObjectId } from "mongodb";
 import cors from "cors"
 
-const port         = 8000;
-const mongodb_user = process.env.MONGODB_USER;
-const mongodb_pass = process.env.MONGODB_PASS;
-const mongodb_url  = `mongodb+srv://${mongodb_user}:${mongodb_pass}@milestone3.vwix0hd.mongodb.net/milestone3`;
-const mongodb_db   = "milestone3";
+const port        = 8000;
+const mongodb_url = process.env.MONGODB_URL;
+const mongodb_db  = process.env.MONGODB_DB;
 
 const app = express();
 app.use(express.json());
 app.use(cors());
-
-let i = 0;
 
 app.get("/api/get/tasks/byid/:id", async (req, res) => {
     const { id } = req.params;
@@ -23,7 +19,6 @@ app.get("/api/get/tasks/byid/:id", async (req, res) => {
 
     const task = await db.collection("tasks").findOne({ _id: new ObjectId(id) });
 
-    console.log(task);
     res.json(task);
 });
 
@@ -40,13 +35,11 @@ app.get("/api/get/tasks/byuser/:user", async (req, res) => {
 });
 
 app.put("/api/put/task/", async (req, res) => {
-    console.log(req.body);
-
     const client = new MongoClient(mongodb_url);
     await client.connect();
     const db = client.db(mongodb_db);
 
-    db.collection("tasks").insertOne({
+    const ack = await db.collection("tasks").insertOne({
         name:        req.body.name,
         user:        req.body.user,
         category:    req.body.category,
@@ -58,9 +51,21 @@ app.put("/api/put/task/", async (req, res) => {
         description: req.body.description,
     });
 
-    res.send(`Response #${i++}`);
+    res.json({ acknowledged: ack.acknowledged });
+});
+
+app.delete("/api/delete/task/byid/:id", async (req, res) => {
+    console.log(`Request to delete ${req.params.id}`);
+
+    const client = new MongoClient(mongodb_url);
+    await client.connect();
+    const db = client.db(mongodb_db);
+
+    const ack = await db.collection("tasks").deleteOne({ _id: new ObjectId(req.params.id) });
+    res.json({ acknowledged: ack.acknowledged });
 });
 
 app.listen(port, () => {
+    console.log(`Using ${mongodb_db}@${mongodb_url}`);
     console.log(`Listening for connections on port ${port}...`);
 });
