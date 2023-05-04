@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const port        = 8000;
+const port        = process.env.EXPRESS_PORT || 8000;
 const mongodb_url = process.env.MONGODB_URL;
 const mongodb_db  = process.env.MONGODB_DB;
 
